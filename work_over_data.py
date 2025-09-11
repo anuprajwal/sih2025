@@ -8,7 +8,7 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 
 collection = client.get_or_create_collection(name="my_collection")
 
-# print(collection.peek())   # shows first few records (ids, embeddings, metadatas)
+# print(collection.peek())
 # print(collection.get())
 
 

@@ -29,6 +29,12 @@ def view_cycle_file(file_path):
     if "LATITUDE" in ds:
         print("Latitude :", ds["LATITUDE"].values)
         latitude = ds["LATITUDE"].values
+    if "LATITUDE" in ds:
+        print("platform num :", ds["PLATFORM_NUMBER"].values)
+        print("project name :", ds["PROJECT_NAME"].values)
+        print("PI_NAME name :", ds["PI_NAME"].values)
+        print("STATION_PARAMETERS :", ds["STATION_PARAMETERS"].values)
+        print("DIRECTION :", ds["DIRECTION"].values)
     if "LONGITUDE" in ds:
         print("Longitude:", ds["LONGITUDE"].values)
         longitude = ds["LONGITUDE"].values
