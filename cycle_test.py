@@ -22,6 +22,9 @@ def view_cycle_file(file_path):
     latitude=0
     longitude =0
     date = 0
+    float_id = 0
+    project_name = ''
+    researcherName = ''
     param = []
 
     # Metadata
@@ -31,8 +34,11 @@ def view_cycle_file(file_path):
         latitude = ds["LATITUDE"].values
     if "LATITUDE" in ds:
         print("platform num :", ds["PLATFORM_NUMBER"].values)
+        float_id = ds["PLATFORM_NUMBER"].values
         print("project name :", ds["PROJECT_NAME"].values)
+        project_name = ds["PROJECT_NAME"].values
         print("PI_NAME name :", ds["PI_NAME"].values)
+        researcherName = ds["PI_NAME"].values
         print("STATION_PARAMETERS :", ds["STATION_PARAMETERS"].values)
         print("DIRECTION :", ds["DIRECTION"].values)
     if "LONGITUDE" in ds:
@@ -43,18 +49,18 @@ def view_cycle_file(file_path):
         date = ds["JULD"].values
 
     # Core parameters
-    for var in ["PRES", "TEMP", "PSAL"]:
+    for var in range(0,45):
         # if var in ds:
-            print(f"\n🔹 {var} data (first 10 values):")
-            print(ds[var].values[0])
+            # print(f"\n🔹 {var} data (first 10 values):")
+            # print(ds[var].values[0])
+        # print()
         # print([float(ds["PRES"].values[0][var]), float(ds["TEMP"].values[0][var]), float(ds["PSAL"].values[0][var])])
-        # param.append([float(ds["PRES"].values[0][var]), float(ds["TEMP"].values[0][var]), float(ds["PSAL"].values[0][var])])
-
+        param.append([float(ds["PRES"].values[0][var]), float(ds["TEMP"].values[0][var]), float(ds["PSAL"].values[0][var])])
     ds.close()
-    return (latitude, longitude, date, param)
+    return (latitude, longitude, date, float_id, project_name, researcherName, param)
 
 
-def save_cycle(latitude, longitude, date, params):
+def save_cycle(latitude, longitude, date, float_id, project_name, researcherName, params):
     try:
         conn = pymysql.connect(
             host="localhost",
@@ -68,15 +74,6 @@ def save_cycle(latitude, longitude, date, params):
         INSERT INTO cycles (date, latitude, longitude, params)
         VALUES (%s, %s, %s, %s)
         """
-
-        # if isinstance(date, str):
-        #     try:
-        #         # Adjust format if your date string is different
-        #         date_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f")
-        #     except ValueError:
-        #         print("⚠️ Date format mismatch. Expected YYYY-MM-DD.")
-        #         return
-
         # Ensure JSON string
         params_json = json.dumps(params)
 
@@ -100,6 +97,16 @@ def save_cycle(latitude, longitude, date, params):
 
 if __name__ == "__main__":
     
-    latitude, longitude, date, param = view_cycle_file("D1900121_001.nc")
-    # print(float(latitude[0]), float(longitude[0]), str(date[0]), param)
-    # save_cycle(float(latitude[0]), float(longitude[0]), str(date[0]), param)
+    latitude, longitude, date, float_id, project_name, researcherName, param = view_cycle_file("D1900121_001.nc")
+
+
+    float_id = str(float_id[0])
+    float_id = float_id[2:-1].strip()
+
+    project_name = str(project_name[0])
+    project_name = project_name[2:-1].strip()
+
+    researcherName = str(researcherName[0])
+    researcherName = researcherName[2:-1].strip()
+    print(float(latitude[0]), float(longitude[0]), str(date[0]),  )
+    save_cycle(float(latitude[0]), float(longitude[0]), str(date[0]), float_id, project_name, researcherName, param)
